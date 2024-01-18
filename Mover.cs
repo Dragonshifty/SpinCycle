@@ -46,8 +46,22 @@ public class Mover : MonoBehaviour
 
     void Run()
     {
-        Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y);
-        playerRigid.velocity = movement * moveSpeed * Time.fixedDeltaTime;
+        // Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y);
+        // playerRigid.velocity = movement * moveSpeed * Time.fixedDeltaTime;
+
+    
+    Vector3 cameraForward = Camera.main.transform.forward;
+    Vector3 cameraRight = Camera.main.transform.right;
+
+    cameraForward.y = 0f;
+    cameraRight.y = 0f;
+
+    cameraForward.Normalize();
+    cameraRight.Normalize();
+
+    Vector3 movement = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
+
+    playerRigid.velocity = movement * moveSpeed * Time.fixedDeltaTime;
     }
 
     private void OnTriggerEnter(Collider other) 
