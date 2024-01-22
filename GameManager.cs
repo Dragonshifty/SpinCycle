@@ -18,6 +18,12 @@ public class GameManager : MonoBehaviour
         EventOverseer.SpawnPoint += SetSpawnPoint;    
     }
 
+    private void OnDisable() 
+    {
+        EventOverseer.WallHit -= HandleWallHit;
+        EventOverseer.SpawnPoint -= SetSpawnPoint;
+    }
+
     private void HandleWallHit(Vector3 wallHitPosition)
     {
         spawnPoints.GoToSpawn();

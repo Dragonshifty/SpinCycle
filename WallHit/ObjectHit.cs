@@ -4,26 +4,20 @@ using UnityEngine;
 
 public class ObjectHit : MonoBehaviour
 {
-    SpawnPoints spawnPoints;
-    private void Start() 
-    {
-        // EventOverseer.Instance.WallHit += Tester;  
-        spawnPoints = FindObjectOfType<SpawnPoints>();  
-    }
+    [SerializeField] bool hitTwice;
     private void OnCollisionEnter(Collision other) 
     {
+        
         if (other.gameObject.tag.Equals("Player"))
         {
-        GetComponent<MeshRenderer>().material.color = Color.red;
-        gameObject.tag = "Hit";
-        // spawnPoints.GoToSpawn(EventOverseer.Instance.SpawnIndex);
-        EventOverseer.InvokeWallHit(transform.position);
+            if (!hitTwice) GetComponent<MeshRenderer>().material.color = Color.red;
+            gameObject.tag = "Hit";
+            EventOverseer.InvokeWallHit(transform.position);
         }
-    }
 
-
-    private void Tester()
-    {
-        Debug.Log("Testing from Object Hit");
+        if (hitTwice)
+        {
+            GetComponent<MeshRenderer>().material.color = Color.grey;
+        }
     }
 }
