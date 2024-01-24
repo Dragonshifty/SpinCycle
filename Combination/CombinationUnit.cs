@@ -11,7 +11,7 @@ public class CombinationUnit : MonoBehaviour
     private Color colourGreen;
     private Color targetColour;
     private bool targetAchieved;
-    private bool delayRunning;
+    private bool isColliding;
 
     private List<Color> colourList;
     
@@ -62,25 +62,37 @@ public class CombinationUnit : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) 
     {
+        if (isColliding) return;
+        isColliding = true;
+        Debug.Log("Hit wall");
+        
         if (other.gameObject.tag.Equals("Ball"))
         {
+            Debug.Log("Hit wall 2");
             if (!targetAchieved)
             {
                 ChangeColour();
             }
-        }    
+        }   
+        StartCoroutine(ResetIsColliding()); 
     }
 
-    private IEnumerator ChangeColour()
+    private void ChangeColour()
     {
-        delayRunning = true;
-        yield return new WaitForSeconds(0.2f);
-        delayRunning = false;
+        Debug.Log("Colour");
 
-        System.Random rand = new System.Random();
-        int index = rand.Next(colourList.Count);
+        int index = GetNewColourCheck();
 
         meshRenderer.material.color = colourList[index];
+        CheckForTargetColour();
+    }
+
+    private int GetNewColourCheck()
+    {
+        System.Random rand = new System.Random();
+        int index = rand.Next(colourList.Count);
+        if (meshRenderer.material.color == colourList[index]) return GetNewColourCheck();
+        return index;
     }
     
     private void CheckForTargetColour()
@@ -90,5 +102,11 @@ public class CombinationUnit : MonoBehaviour
             targetAchieved = true;
             EventOverseer.InvokeCombinationUnlocked();
         }
+    }
+
+    private IEnumerator ResetIsColliding()
+    {
+        yield return new WaitForEndOfFrame();
+        isColliding = false;
     }
 }

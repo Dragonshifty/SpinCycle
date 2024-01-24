@@ -11,6 +11,8 @@ public class Mover : MonoBehaviour
     [SerializeField] float slowSpin = 45f;
     [SerializeField] float rotateSpeed = 450f;
     [SerializeField] float declineRate = 0.1f;
+    float manualRotateSpeed = 0;
+    bool spinLeft;
     Gamepad gamepad;
     Vector2 moveInput;
     [SerializeField] bool doSpin = false;
@@ -36,6 +38,7 @@ public class Mover : MonoBehaviour
     { 
         Run();    
         Spin();
+        ControlSpin();
     }
 
 
@@ -100,5 +103,34 @@ public class Mover : MonoBehaviour
             doSpin = false;
             rotateSpeed = rotateMaster;
         }
+    }
+
+    private void ControlSpin()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            manualRotateSpeed += 1000 * Time.deltaTime;
+            transform.Rotate(0, manualRotateSpeed * Time.deltaTime, 0);
+            spinLeft = true;
+        }
+
+        if (Input.GetKey(KeyCode.Z))
+        {
+            manualRotateSpeed += 1000 * Time.deltaTime;
+            transform.Rotate(0, -manualRotateSpeed * Time.deltaTime, 0);
+            spinLeft = false;
+        }
+
+        float decline = 1f;
+        manualRotateSpeed = Mathf.Lerp(manualRotateSpeed, 0, decline * Time.deltaTime);
+
+        if (spinLeft)
+        {
+            transform.Rotate(0, manualRotateSpeed * Time.deltaTime, 0);
+        } else
+        {
+            transform.Rotate(0, -manualRotateSpeed * Time.deltaTime, 0);
+        }
+        
     }
 }

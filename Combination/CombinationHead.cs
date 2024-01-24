@@ -13,6 +13,7 @@ public class CombinationHead : MonoBehaviour
 
     private void HandleCombination()
     {
+        Debug.Log("unlock");
         fullCombinationUnlocked = (++combosUnlocked == 3);
         if (fullCombinationUnlocked)
         {
@@ -24,6 +25,6 @@ public class CombinationHead : MonoBehaviour
 
     private void DoSomethingWhenUnlocked()
     {
-
+        Debug.Log("Success");
     }
 }

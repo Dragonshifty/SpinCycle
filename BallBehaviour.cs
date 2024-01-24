@@ -8,7 +8,7 @@ public class BallBehaviour : MonoBehaviour
     Vector3 startingPosition;
     Rigidbody objectRigidbody;
     private bool hitOnce;
-    private bool delayRunning;
+    private bool isColliding;
     [SerializeField] float countAmount = 3f;
     private float countStart = 0f;
 
@@ -26,55 +26,43 @@ public class BallBehaviour : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) 
     {
+        if (isColliding) return;
+        isColliding = true;
         if (other.gameObject.tag.Equals("Destructable"))
         {
             DestroyStuffs(other);
-            return;
         }
 
         if (other.gameObject.tag.Equals("HitTwice"))
-        {
-            if (!delayRunning) StartCoroutine(DelayHit(other));
-            
-            
-            // if (!hitOnce)
-            // {
-            //     Debug.Log("First hit");
-            //     hitOnce = true;
-            //     ReSpawnBall();
-            //     return;
-            // }
-            
+        {  
+            if (hitOnce)
+            {
+                Debug.Log("Second hit");
+                DestroyStuffs(other);
+            } else
+            {
+                Debug.Log("First hit");
+                hitOnce = true;
+                ReSpawnBall();
+            }
         }
 
         if (other.gameObject.tag.Equals("Player"))
         {
             countStart = Time.time;
-        }    
+        } 
+
+        StartCoroutine(ResetIsColliding());   
     }
 
-
-    private IEnumerator DelayHit(Collision other)
+    private IEnumerator ResetIsColliding()
     {
-        delayRunning = true;
-        yield return new WaitForSeconds(0.2f);
-        delayRunning = false;
-
-        if (hitOnce)
-        {
-            Debug.Log("Second hit");
-            DestroyStuffs(other);
-        } else
-        {
-            Debug.Log("First hit");
-                hitOnce = true;
-                ReSpawnBall();
-        }
+        yield return new WaitForEndOfFrame();
+        isColliding = false;
     }
 
     private void StartCountToReset()
     {
-            // countStart += Time.deltaTime;
             float elapsedTime = Time.time - countStart;
 
             if (elapsedTime >= countAmount)
@@ -100,15 +88,8 @@ public class BallBehaviour : MonoBehaviour
         {
             Debug.Log("Destroy");
             Destroy(gameObject);
-            StartCoroutine(DestroyWallDelayed(wall));
-            // Destroy(wall);
-        }
-        
+            Destroy(wall);
+        }  
     }
 
-    private IEnumerator DestroyWallDelayed(GameObject wall)
-    {
-        yield return new WaitForFixedUpdate(); 
-        Destroy(wall);
-    }
 }
