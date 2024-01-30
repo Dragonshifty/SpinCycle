@@ -6,19 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class Mover : MonoBehaviour
 {
-    Rigidbody playerRigid;
-    [SerializeField] float rotateMaster = 450f;
-    [SerializeField] float slowSpin = 45f;
-    [SerializeField] float rotateSpeed = 450f;
-    [SerializeField] float declineRate = 0.1f;
-    float manualRotateSpeed = 0;
-    bool spinLeft;
+    Rigidbody playerRigid;  
     Gamepad gamepad;
     Vector2 moveInput;
-    [SerializeField] bool doSpin = false;
-    // [SerializeField] public float rotateSpeed = 145f;
-    // float rotateMaster;
-    // float rotateOff = 0f;
+
     [SerializeField] float moveSpeed = 1000f;
     void Start()
     {
@@ -27,18 +18,11 @@ public class Mover : MonoBehaviour
         if (gamepad!= null) gamepad = Gamepad.current;
     }
 
-    private void Update() {
-        // if (gamepad.buttonSouth.isPressed)
-        // {
-        //     SceneManager.LoadScene(0);
-        // }
-    }
+
 
     private void FixedUpdate() 
     { 
         Run();    
-        Spin();
-        ControlSpin();
     }
 
 
@@ -67,70 +51,4 @@ public class Mover : MonoBehaviour
     playerRigid.velocity = movement * moveSpeed * Time.fixedDeltaTime;
     }
 
-    private void OnTriggerEnter(Collider other) 
-    {
-        if(other.gameObject.tag.Equals("spin"))
-        {
-            rotateSpeed = rotateMaster;
-            doSpin = true;
-        }    
-
-        if(other.gameObject.tag.Equals("stopspin"))
-        {
-            doSpin = false;
-            rotateSpeed = rotateMaster;
-        }  
-
-        if(other.gameObject.tag.Equals("slowspin"))
-        {
-            rotateSpeed = slowSpin;
-            doSpin = true;
-        }  
-    }
-
-    void Spin()
-    {
-        if (doSpin)
-        {
-            // transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
-            
-            transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
-            rotateSpeed = Mathf.Lerp(rotateSpeed, 0, declineRate * Time.deltaTime);
-        }
-        
-        if (rotateSpeed < 2)
-        {
-            doSpin = false;
-            rotateSpeed = rotateMaster;
-        }
-    }
-
-    private void ControlSpin()
-    {
-        if (Input.GetKey(KeyCode.C))
-        {
-            manualRotateSpeed += 1000 * Time.deltaTime;
-            transform.Rotate(0, manualRotateSpeed * Time.deltaTime, 0);
-            spinLeft = true;
-        }
-
-        if (Input.GetKey(KeyCode.Z))
-        {
-            manualRotateSpeed += 1000 * Time.deltaTime;
-            transform.Rotate(0, -manualRotateSpeed * Time.deltaTime, 0);
-            spinLeft = false;
-        }
-
-        float decline = 1f;
-        manualRotateSpeed = Mathf.Lerp(manualRotateSpeed, 0, decline * Time.deltaTime);
-
-        if (spinLeft)
-        {
-            transform.Rotate(0, manualRotateSpeed * Time.deltaTime, 0);
-        } else
-        {
-            transform.Rotate(0, -manualRotateSpeed * Time.deltaTime, 0);
-        }
-        
-    }
 }
